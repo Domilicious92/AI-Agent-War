@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+*.egg-info/
+build/
+dist/
+
+# Frontend
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+
+# Local state and sensitive workspace data
+workspace/
+*.sqlite
+*.sqlite3
