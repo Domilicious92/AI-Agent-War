@@ -46,3 +46,12 @@ No unreviewed extension installation/use; no secrets in Git; no unsupported succ
 - **Security limitations:** This helper is not an API authorization layer, is vulnerable to TOCTOU if used without descriptor-relative file operations, and does not implement a sandbox. Do not expose it as a tool execution endpoint.
 - **Review:** Checked compatibility with existing FastAPI health-only scaffold; no API routes or extension execution permissions were introduced.
 - **Next:** Obtain CI results, run Ruff/Pytest, review security assumptions, add API contracts and secure file-worker design. Keep P0 in progress and PR draft.
+
+## Iteration: descriptor-relative secure read (2026-11-23)
+- **Scope:** P0 security foundation for PRJ-002; added `backend/app/projects/secure_reader.py` and `backend/tests/test_secure_reader.py`.
+- **Behavior:** POSIX-only, descriptor-relative `os.open(..., dir_fd=...)` with `O_NOFOLLOW` on each path component, regular-file-only read, bounded bytes, explicit traversal/absolute-path rejection, descriptor cleanup. No endpoint or extension execution was exposed.
+- **Review:** Unlike `path_policy.py`, this read helper avoids the separate resolve-then-open race for descendants. It still requires a trusted, pre-authorized root, worker isolation, per-operation authorization and platform-specific review. In particular, the root path itself is opened by pathname; a trusted root descriptor/identity is needed for stronger binding. No write API was introduced.
+- **Tests authored:** in-root regular read, malformed/absolute/traversal paths, file and directory symlink escapes, oversized files, directory-as-file and invalid limits.
+- **Verification:** Earlier head `db485de90fc9` has a completed successful GitHub Actions backend job (run 45273559720; lint and test steps succeeded). New secure-reader commits require fresh CI verification; no local test execution claimed.
+- **Commits:** `02f9dd65c893` (reader), `6def67df6701` (syntax correction), `66ac73e4b354` (tests).
+- **Next:** Check CI on new head; resolve any lint/test issues; formalize API contracts and project authorization. P0 remains in progress, PR #1 stays draft.
