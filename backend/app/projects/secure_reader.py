@@ -32,7 +32,7 @@ def read_project_file(project_root: Path, relative_path: str, max_bytes: int = 1
     if (
         requested_path.is_absolute()
         or any(component in ("", ".", "..") for component in components)
-        or "\\\" in relative_path
+        or chr(92) in relative_path
         or "\x00" in relative_path
     ):
         raise ProjectReadDenied("Unsafe project-relative path.")
