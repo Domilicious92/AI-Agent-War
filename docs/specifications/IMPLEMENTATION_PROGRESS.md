@@ -55,3 +55,11 @@ No unreviewed extension installation/use; no secrets in Git; no unsupported succ
 - **Verification:** Earlier head `db485de90fc9` has a completed successful GitHub Actions backend job (run 45273559720; lint and test steps succeeded). New secure-reader commits require fresh CI verification; no local test execution claimed.
 - **Commits:** `02f9dd65c893` (reader), `6def67df6701` (syntax correction), `66ac73e4b354` (tests).
 - **Next:** Check CI on new head; resolve any lint/test issues; formalize API contracts and project authorization. P0 remains in progress, PR #1 stays draft.
+
+## Iteration: API trust-boundary contract (2026-11-24)
+- **Scope:** P0 API contract and authorization design. Added `docs/architecture/API_CONTRACT_V0_1.md` with proposed endpoints, authorization/CSRF requirements, project isolation, typed error shape, extension approval gates, and concrete negative-test criteria.
+- **Review:** Cross-checked against current specification and the existing health-only FastAPI application. Contract explicitly labels all other endpoints **not implemented**, avoiding false implementation claims. Secure-reader helpers remain unexposed and require server-owned project roots.
+- **Evidence:** Commit `5871baa8f353b191ed493a9a6d9e36c2c0b19c7a` on `feature/p0-project-foundation`.
+- **Verification:** Documentation-only change. No local tests executed. GitHub workflow query for prior `ac844077f8e9` returned no matching PR workflow runs; no fresh green CI assertion can be made. The previous recorded green CI applies only to `db485de90fc9`.
+- **Blockers:** Authentication/session policy, local runner, and provider API keys are not configured. No plugins, skills, MCP servers or execution tools were installed or activated.
+- **Next:** Confirm latest PR CI and implement typed API schemas with isolated tests. Keep P0 in progress and PR draft; no merge/deploy.
