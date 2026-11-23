@@ -37,3 +37,12 @@
 
 ## Workflow invariants
 No unreviewed extension installation/use; no secrets in Git; no unsupported success claims; changes via feature branches and draft PRs.
+
+## Iteration: project path boundary (2026-11-23)
+- **Scope:** P0 security foundation supporting PRJ-002, not a completed PRJ-002 implementation.
+- Added `backend/app/projects/path_policy.py` with a fail-closed, read-only path resolution helper for an explicitly authorized project root.
+- Added five pytest cases: permitted in-root file, parent traversal, absolute outside path, symlink escape, and missing path.
+- **Verification:** Code and tests committed to feature branch. Tests were **not executed in this automation run**; GitHub combined commit status previously returned no statuses. Do not mark as passing.
+- **Security limitations:** This helper is not an API authorization layer, is vulnerable to TOCTOU if used without descriptor-relative file operations, and does not implement a sandbox. Do not expose it as a tool execution endpoint.
+- **Review:** Checked compatibility with existing FastAPI health-only scaffold; no API routes or extension execution permissions were introduced.
+- **Next:** Obtain CI results, run Ruff/Pytest, review security assumptions, add API contracts and secure file-worker design. Keep P0 in progress and PR draft.
