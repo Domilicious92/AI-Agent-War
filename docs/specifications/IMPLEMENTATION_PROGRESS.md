@@ -108,3 +108,11 @@ No unreviewed extension installation/use; no secrets in Git; no unsupported succ
 - Review: supports specification section 8 and API trust boundary; deliberately not wired into HTTP yet. Does not authenticate, enforce actual socket binding, configure TLS/proxy trust, or issue cookies. Exact canonical authority intentionally rejects aliases. No new routes or extension execution.
 - Verification: baseline CI successful; new tests authored, not executed locally; fresh CI required. P0 remains in progress.
 - Next: verify fresh CI, define trusted local bootstrap and integrate host/origin/session checks with HTTP and secure cookies; then SQLite migrations. No secrets, extension activation, merge or deployment.
+
+## Iteration: one-time local bootstrap (2026-11-24)
+- Re-read specification v0.1.0, progress, API contract, HTTP policy, session store, application and dependency manifest. Branch inventory contains main and feature/p0-project-foundation; PR #1 is open/draft.
+- Baseline commit a1b97896cccb19893c565cec34abf3628d972990: Backend CI run 45452838004 completed successfully, providing evidence for the previous HTTP authority component.
+- Added local bootstrap challenge with digest-only storage, 120-second default expiry, server-owned principal, atomic single-use exchange and invalidation on reissue. Implementation e9867731936ac938e2363695e2c3f7db0303ef31; 12 parametrized regression cases in 9db1fe012eac035b06657d073507b80d561e89e6.
+- Review: uses existing SessionStore without changing its contract; challenge consumption precedes session issuance and fails closed on capacity errors. No HTTP route, launcher delivery, cookie or network binding implemented. Trusted launcher must deliver challenge privately, never via URL/logs; HTTP integration needs host/origin checks, bounded input and rate limiting. No extensions or provider calls introduced.
+- Verification: baseline CI green; new tests authored, not executed locally; fresh CI pending. P0 remains in progress.
+- Next: verify new CI, implement trusted launcher delivery and HTTP integration with secure cookies and negative tests, then SQLite migrations. No secrets, extension activation, merge or deployment.
