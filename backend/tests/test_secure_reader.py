@@ -7,7 +7,6 @@ import pytest
 
 from app.projects.secure_reader import ProjectReadDenied, read_project_file
 
-
 pytestmark = pytest.mark.skipif(
     os.name != "posix" or not hasattr(os, "O_NOFOLLOW"),
     reason="Secure reader is available only on POSIX systems with O_NOFOLLOW.",
