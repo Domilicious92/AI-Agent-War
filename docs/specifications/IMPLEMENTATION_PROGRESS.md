@@ -63,3 +63,11 @@ No unreviewed extension installation/use; no secrets in Git; no unsupported succ
 - **Verification:** Documentation-only change. No local tests executed. GitHub workflow query for prior `ac844077f8e9` returned no matching PR workflow runs; no fresh green CI assertion can be made. The previous recorded green CI applies only to `db485de90fc9`.
 - **Blockers:** Authentication/session policy, local runner, and provider API keys are not configured. No plugins, skills, MCP servers or execution tools were installed or activated.
 - **Next:** Confirm latest PR CI and implement typed API schemas with isolated tests. Keep P0 in progress and PR draft; no merge/deploy.
+
+## Iteration: typed API boundary models (2026-11-24)
+- Added pure Pydantic models for chat creation, message creation, project summaries, pagination and public error envelopes. Unknown fields are rejected; no client-supplied role or project identity is accepted in creation bodies. No routes were added.
+- Added 15 parametrized test cases covering bounds, malformed UUIDs, privileged fields and public metadata/error redaction constraints.
+- Commits: `9a60eac2968c` (models), `53339a2aa5a3` (tests).
+- Review: consistent with API contract v0.1 and health-only application. Validation is not authorization; error code/message pairing and HTTP exception mapping, request body byte limits, authentication and persistence remain outstanding. Pydantic v2 dependency should be explicitly declared before acceptance.
+- Verification: no local execution performed. Workflow query for previous abbreviated head returned no runs. New test commit workflow query returned 0 runs; no successful test claim made. P0 remains in progress.
+- Next: explicitly declare Pydantic v2, verify CI, complete error mapping and session/persistence design. No extensions activated; no merge or deployment.
