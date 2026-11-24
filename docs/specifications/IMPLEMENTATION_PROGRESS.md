@@ -71,3 +71,10 @@ No unreviewed extension installation/use; no secrets in Git; no unsupported succ
 - Review: consistent with API contract v0.1 and health-only application. Validation is not authorization; error code/message pairing and HTTP exception mapping, request body byte limits, authentication and persistence remain outstanding. Pydantic v2 dependency should be explicitly declared before acceptance.
 - Verification: no local execution performed. Workflow query for previous abbreviated head returned no runs. New test commit workflow query returned 0 runs; no successful test claim made. P0 remains in progress.
 - Next: explicitly declare Pydantic v2, verify CI, complete error mapping and session/persistence design. No extensions activated; no merge or deployment.
+
+## Iteration: CI repair and dependency contract (2026-11-24)
+- Reviewed specification, PR #1, branch inventory, API models, application scaffold and dependency manifest.
+- CI run 45300281109 on head 4b948526370e failed at Ruff I001 in tests/test_secure_reader.py; pytest was skipped. Dependency installation succeeded. Removed the extra blank line identified by Ruff without changing test semantics (2387a1462f9f5701eb9c53721c4897fef0df96cd).
+- Declared Pydantic >=2.9,<3 explicitly because API models directly import v2 APIs (069ca04e3ace2e6ac3ed3a7ebe3ff9db83425e05). Compatible with the Pydantic 2.14.4 observed in the previous CI log.
+- Verification: GitHub writes confirmed; fresh CI and pytest results pending. No local execution claimed. P0 remains in progress.
+- Next: verify new head CI; fix any failures before proceeding to public error mapping and session/persistence design. No extensions installed or activated, no secrets, merge or deployment.
