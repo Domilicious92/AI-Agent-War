@@ -2,12 +2,17 @@
 
 from fastapi import FastAPI
 
+from app.public_errors import install_public_error_handlers
+
 application = FastAPI(
     title="AI Agent War",
     version="0.0.1",
     docs_url=None,
     redoc_url=None,
 )
+
+
+install_public_error_handlers(application)
 
 
 @application.get("/api/health")
