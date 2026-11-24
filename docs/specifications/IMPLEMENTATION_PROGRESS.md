@@ -78,3 +78,11 @@ No unreviewed extension installation/use; no secrets in Git; no unsupported succ
 - Declared Pydantic >=2.9,<3 explicitly because API models directly import v2 APIs (069ca04e3ace2e6ac3ed3a7ebe3ff9db83425e05). Compatible with the Pydantic 2.14.4 observed in the previous CI log.
 - Verification: GitHub writes confirmed; fresh CI and pytest results pending. No local execution claimed. P0 remains in progress.
 - Next: verify new head CI; fix any failures before proceeding to public error mapping and session/persistence design. No extensions installed or activated, no secrets, merge or deployment.
+
+## Iteration: public HTTP error boundary (2026-11-24)
+- Baseline head `3dcce474b03bf13cfdaa6a0015a4d236ed4c0ac4`: GitHub Actions run 45307875879 completed successfully. PR #1 remains open, draft, unmerged.
+- Added fixed public error mapping, server-generated UUIDs, no-store responses and handlers for validation, HTTP and unexpected exceptions; wired into health-only application. Preserves Allow on 405. No new production resource routes.
+- Commits: 42e579d886d2 (handlers), f8c4959243d5 (registration), 22529b2546cb (eight test cases including parameterization).
+- Review: matches API contract envelope; does not implement authentication, authorization, body-size limits, or secure server-side exception logging. Future authentication must define safe WWW-Authenticate handling and rate limiting must define Retry-After handling; current handlers do not forward those headers. ASGI server logging must be independently redacted before sensitive routes are enabled.
+- Verification: baseline CI green; new tests authored, not locally executed; new head requires CI. No extension installation, activation, execution, secrets, merge or deployment.
+- Next: verify new CI, define session/CSRF and persistence architecture, keep P0 in progress until exit gates are evidenced.
