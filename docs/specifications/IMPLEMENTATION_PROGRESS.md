@@ -1,6 +1,6 @@
 # AI-Agent-War implementation progress
 
-**Updated:** 2026-11-23  
+**Updated:** 2026-11-24  
 **Current phase:** P0 — foundation  
 **Working branch:** `feature/p0-project-foundation`
 
@@ -86,3 +86,11 @@ No unreviewed extension installation/use; no secrets in Git; no unsupported succ
 - Review: matches API contract envelope; does not implement authentication, authorization, body-size limits, or secure server-side exception logging. Future authentication must define safe WWW-Authenticate handling and rate limiting must define Retry-After handling; current handlers do not forward those headers. ASGI server logging must be independently redacted before sensitive routes are enabled.
 - Verification: baseline CI green; new tests authored, not locally executed; new head requires CI. No extension installation, activation, execution, secrets, merge or deployment.
 - Next: verify new CI, define session/CSRF and persistence architecture, keep P0 in progress until exit gates are evidenced.
+
+## Iteration: browser origin policy (2026-11-24)
+- Baseline PR #1 head `2a249f780b310f9e31869d6310bdc14f046287e0`: GitHub Actions run 45315157472 completed successfully. P0 remains in progress.
+- Added pure browser origin policy in `backend/app/browser_origin.py` (041ef7b5d29f) and 16 parametrized test cases in `backend/tests/test_browser_origin.py` (11403a18aebd).
+- Unsafe methods require exactly one Origin matching server-owned configuration. Missing, null, foreign and duplicate origins are rejected. Safe methods may omit Origin; supplied foreign origins are rejected.
+- Review: consistent with API contract and threat model; no middleware or resource routes exposed. This helper is not authentication, host validation, or complete CSRF protection. Configuration must validate the canonical origin; future integration must preserve duplicate headers, reject untrusted Host, enforce session-bound CSRF tokens, and ensure safe methods never mutate state. No provider or extension changes.
+- Verification: baseline CI success confirmed via GitHub workflow API. New tests authored; local execution not performed and new CI pending. No extension installation, execution, merge or deployment.
+- Next: verify new CI; define local session lifecycle, CSRF token binding, trusted Host/origin configuration and persistence migration strategy. Keep PR draft.
