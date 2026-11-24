@@ -101,3 +101,10 @@ No unreviewed extension installation/use; no secrets in Git; no unsupported succ
 - Review: no new HTTP routes, provider calls or extension execution. Session issuance assumes a trusted authenticated principal; it is not credential verification. Restart invalidates sessions; multi-worker sharing, secure bootstrap, cookie policy, trusted Host/origin integration, request limits and in-flight authorization remain unresolved. Mutation callers must use authorize_mutation, not authenticate alone. No secrets, merge or deployment.
 - Verification: baseline CI green; new tests authored, not locally executed. New CI must be verified before accepting this component. P0 remains in progress.
 - Next: verify new CI; define trusted local bootstrap and HTTP session integration, then SQLite migration strategy. Human security acceptance and isolated runner remain open; external extensions remain disabled.
+
+## Iteration: canonical local HTTP authority (2026-11-24)
+- Re-read specification, progress, API contract, session and origin helpers, FastAPI entry point, dependency manifest, branches and open PR. Baseline head `ff7832f9bf8306ff596ecf31d0b9fff8f7b2182b`: Backend CI run 45387737658 completed successfully; isolated session and CSRF tests now have CI evidence.
+- Added immutable server-owned loopback host/port/scheme configuration and exact raw Host/Origin checks, rejecting duplicate headers and ignoring forwarded authority. Implementation `b7f9d6eba49a8`; 18 test cases `c53b8c21c3a8`.
+- Review: supports specification section 8 and API trust boundary; deliberately not wired into HTTP yet. Does not authenticate, enforce actual socket binding, configure TLS/proxy trust, or issue cookies. Exact canonical authority intentionally rejects aliases. No new routes or extension execution.
+- Verification: baseline CI successful; new tests authored, not executed locally; fresh CI required. P0 remains in progress.
+- Next: verify fresh CI, define trusted local bootstrap and integrate host/origin/session checks with HTTP and secure cookies; then SQLite migrations. No secrets, extension activation, merge or deployment.
