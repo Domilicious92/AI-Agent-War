@@ -36,3 +36,26 @@ def test_explicit_revocation_is_idempotent():
     bootstrap.invalidate()
     assert bootstrap.exchange(token) is None
     assert bootstrap.exchange(bootstrap.issue()) is not None
+
+
+def test_stale_delivery_failure_preserves_newer_challenge():
+    bootstrap = LocalBootstrap(SessionStore(), "owner")
+    newer_tokens = []
+
+    def fail_after_reissue(token):
+        newer_tokens.append(bootstrap.issue())
+        raise ValueError(token)
+
+    with pytest.raises(RuntimeError, match="^Private bootstrap delivery failed$") as error:
+        deliver_bootstrap_challenge(bootstrap, fail_after_reissue)
+    assert error.value.__context__ is None
+    assert bootstrap.exchange(newer_tokens[0]) is not None
+
+
+def test_token_specific_revocation_is_idempotent():
+    bootstrap = LocalBootstrap(SessionStore(), "owner")
+    token = bootstrap.issue()
+    bootstrap.invalidate_token(token)
+    bootstrap.invalidate_token(token)
+    assert bootstrap.exchange(token) is None
+    assert bootstrap.exchange(bootstrap.issue()) is not None
