@@ -19,7 +19,7 @@ def deliver_bootstrap_challenge(
         private_delivery(token)
     except Exception:  # noqa: BLE001 - transport failures must revoke the challenge.
         # Invalidate even a partially delivered challenge on transport failure.
-        bootstrap.invalidate()
+        bootstrap.invalidate_token(token)
     else:
         return
     # Raise outside the handler to avoid retaining the transport exception as context.
