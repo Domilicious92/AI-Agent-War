@@ -37,6 +37,12 @@ class LocalBootstrap:
             self._expires_at = self._clock() + self._lifetime
         return token
 
+    def invalidate(self) -> None:
+        """Revoke the outstanding challenge without issuing a replacement."""
+        with self._lock:
+            self._digest = None
+            self._expires_at = 0.0
+
     def exchange(self, token: str) -> SessionCredentials | None:
         """Consume a valid challenge atomically, even if session issuance fails."""
         if not token or len(token) > 128 or not token.isascii():
