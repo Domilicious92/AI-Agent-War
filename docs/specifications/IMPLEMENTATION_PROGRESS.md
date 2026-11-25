@@ -1,6 +1,6 @@
 # AI-Agent-War implementation progress
 
-**Updated:** 2026-11-24  
+**Updated:** 2026-11-25  
 **Current phase:** P0 — foundation  
 **Working branch:** `feature/p0-project-foundation`
 
@@ -116,3 +116,12 @@ No unreviewed extension installation/use; no secrets in Git; no unsupported succ
 - Review: uses existing SessionStore without changing its contract; challenge consumption precedes session issuance and fails closed on capacity errors. No HTTP route, launcher delivery, cookie or network binding implemented. Trusted launcher must deliver challenge privately, never via URL/logs; HTTP integration needs host/origin checks, bounded input and rate limiting. No extensions or provider calls introduced.
 - Verification: baseline CI green; new tests authored, not executed locally; fresh CI pending. P0 remains in progress.
 - Next: verify new CI, implement trusted launcher delivery and HTTP integration with secure cookies and negative tests, then SQLite migrations. No secrets, extension activation, merge or deployment.
+
+## Iteration: private launcher handoff adapter (2026-11-25)
+- Re-read specification v0.1.0, progress, API contract, bootstrap, session store, application, tests and dependency manifest. Branch inventory main and feature/p0-project-foundation; PR #1 open/draft.
+- Baseline head 2dba555b297e0496c88781a94930b34cfc6f12c0: Actions run 45474264552 completed successfully, providing CI evidence for the prior bootstrap component.
+- Added explicit challenge invalidation (8b35c17b40d926b89b8e042b0ee95ac31df3424a) and an injectable private delivery adapter (30533b4c62d38fe8dc422224ed053a110c78ac96). Adapter returns no token, revokes outstanding challenge on delivery failure and suppresses the original exception in normal traceback output.
+- Three regression tests authored (93a9272a542c2c4bd5e9b58f97c7bf7d2fc42b2c): successful single-use handoff, partial delivery failure, idempotent revocation.
+- Review: no new dependencies or HTTP routes; existing session contract unchanged. Transport is a stub boundary, not an authenticated private channel implementation. Launcher must serialize handoffs; concurrent reissue can invalidate a newer challenge on failure. A recipient that exchanges before delivery fails may already have a session; actual transport must prevent consumption before successful delivery or support session rollback. Exception context may remain inspectable by privileged logging; no claim of complete redaction. Do not expose adapter to untrusted callbacks or enable resource routes yet.
+- Verification: baseline CI green; new tests not locally executed. Workflow query for test commit returned 0 matching runs; new section not accepted pending CI and transport design.
+- Next: verify fresh CI, address handoff atomicity and private transport design, then integrate host/origin/session/CSRF checks and cookies; SQLite migrations remain open. No extensions activated, secrets used, merge or deployment. P0 remains in progress.
