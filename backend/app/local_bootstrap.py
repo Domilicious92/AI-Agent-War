@@ -28,14 +28,36 @@ class LocalBootstrap:
         self._lock = Lock()
         self._digest: bytes | None = None
         self._expires_at = 0.0
+        self._active = False
 
     def issue(self) -> str:
         """Trusted local launcher only; never expose this method as an HTTP route."""
+        return self._issue(active=True)
+
+    def prepare(self) -> str:
+        """Create a challenge that cannot be exchanged until delivery completes."""
+        return self._issue(active=False)
+
+    def _issue(self, *, active: bool) -> str:
         token = secrets.token_urlsafe(32)
         with self._lock:
             self._digest = hashlib.sha256(token.encode("ascii")).digest()
             self._expires_at = self._clock() + self._lifetime
+            self._active = active
         return token
+
+    def activate(self, token: str) -> bool:
+        """Activate only the current, unexpired pending challenge."""
+        if not token or len(token) > 128 or not token.isascii():
+            return False
+        digest = hashlib.sha256(token.encode("ascii")).digest()
+        with self._lock:
+            if self._digest is None or self._active or self._clock() >= self._expires_at:
+                return False
+            if not secrets.compare_digest(self._digest, digest):
+                return False
+            self._active = True
+            return True
 
     def invalidate(self) -> None:
         """Revoke the outstanding challenge without issuing a replacement."""
@@ -62,7 +84,7 @@ class LocalBootstrap:
             if self._digest is None or self._clock() >= self._expires_at:
                 self._digest = None
                 return None
-            if not secrets.compare_digest(self._digest, digest):
+            if not self._active or not secrets.compare_digest(self._digest, digest):
                 return None
             self._digest = None
             return self._sessions.issue(self._principal_id)
