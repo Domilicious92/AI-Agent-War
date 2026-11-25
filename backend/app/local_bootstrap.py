@@ -43,6 +43,16 @@ class LocalBootstrap:
             self._digest = None
             self._expires_at = 0.0
 
+    def invalidate_token(self, token: str) -> None:
+        """Revoke only the matching outstanding challenge under the same lock."""
+        if not token or len(token) > 128 or not token.isascii():
+            return
+        digest = hashlib.sha256(token.encode("ascii")).digest()
+        with self._lock:
+            if self._digest is not None and secrets.compare_digest(self._digest, digest):
+                self._digest = None
+                self._expires_at = 0.0
+
     def exchange(self, token: str) -> SessionCredentials | None:
         """Consume a valid challenge atomically, even if session issuance fails."""
         if not token or len(token) > 128 or not token.isascii():
